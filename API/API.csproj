@@ -21,4 +21,12 @@
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Remove="createReact.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="createReact.Designer.cs" />
+  </ItemGroup>
+
 </Project>
