@@ -15,15 +15,21 @@ builder.Services.AddDbContext<DataContext>(option =>
     option.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString"));
 });
 
+// добавляем в сервис политику
+// чтобы разрешить любой HTTP запрос
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+    });
+});
+
 // Добавляем сервис сваггер
 builder.Services.AddSwaggerGen();
 
-////==============================////==============================////==============================////===========
-
 // Создаем наше приложение
 var app = builder.Build();
-
-////==============================////==============================////==============================////===========
 
 // Другая основная область здесь — это часть, предназначенная для настройки конвейера HTTP-запросов.
 if (app.Environment.IsDevelopment())
@@ -31,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 

@@ -6,7 +6,9 @@ using Persistence;
 
 namespace API.Controllers;
 
-public class ActivitiesController : BaseApiController
+[ApiController]
+[Route("/[controller]")]
+public class ActivitiesController : ControllerBase
 {
     private readonly DataContext _dataContext;
     
@@ -41,7 +43,7 @@ public class ActivitiesController : BaseApiController
     /// Обработчик корневого маршрута
     /// </summary>
     /// <returns>Результат что все в порядке</returns>
-    [HttpGet("api/")]
+    [HttpGet("/")]
     public IActionResult GetRoot()
     {
         return Ok("API is running.");

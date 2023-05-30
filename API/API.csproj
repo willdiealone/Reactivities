@@ -29,4 +29,8 @@
     <Compile Remove="createReact.Designer.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewDirectory1\" />
+  </ItemGroup>
+
 </Project>
