@@ -23,14 +23,20 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="createReact.resx" />
+    <EmbeddedResource Remove="NewDirectory1\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="createReact.Designer.cs" />
+    <Compile Remove="NewDirectory1\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="NewDirectory1\" />
+    <Content Remove="NewDirectory1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="NewDirectory1\**" />
   </ItemGroup>
 
 </Project>

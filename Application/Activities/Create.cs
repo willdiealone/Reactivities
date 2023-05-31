@@ -1,0 +1,45 @@
+using Domain;
+using MediatR;
+using Persistence;
+
+namespace Application;
+
+/* Класс создания сущности (Activity) */
+public class Create
+{
+    /* Комманды ничего не возвращают(только изменяют данные)*/
+    public class Command : IRequest
+    {
+        public Activity Activity { get; set; }
+        
+        /* Обработчик команды*/
+        public class Handler : IRequestHandler<Command>
+        {
+            private readonly DataContext _context;
+
+            public Handler(DataContext _context)
+            {
+                this._context = _context;
+            }
+            
+            /// <summary>
+            /// Метод выполняет команду
+            /// </summary>
+            /// <param name="request">Команда</param>
+            /// <param name="cancellationToken">Токен отмены</param>
+            /// <returns>специальным типом, который представляет отсутствие значения
+            /// (аналогично void в синхронных методах), но сообщает нашему api, что можем
+            /// давигаться дальше</returns>
+            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            {
+                /* Не используем AddAsync(), так как мы не подключаемся к базе данных, отсюда мы лишь
+                   добавляем новый обьект в память */
+                _context.Activities.Add(request.Activity);
+
+                 await _context.SaveChangesAsync();
+                 
+                 return Unit.Value;
+            }
+        }
+    }
+}

@@ -1,21 +1,13 @@
-
+using Application;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("/[controller]")]
-public class ActivitiesController : ControllerBase
+public class ActivitiesController : BaseApiController
 {
-    private readonly DataContext _dataContext;
-    
-    public ActivitiesController(DataContext dataContext)
-    {
-        _dataContext = dataContext;
-    }
+    #region Get
 
     /// <summary>
     /// Метод получаем данные из Бд
@@ -24,9 +16,8 @@ public class ActivitiesController : ControllerBase
     [HttpGet] // api/activities
     public async Task<ActionResult<List<Activity>>> GetActivities()
     {
-        return await _dataContext.Activities.ToListAsync();
+        return await Mediator.Send(new List.Query());
     }
-
 
     /// <summary>
     /// Метод возвращает данные по айди 
@@ -36,7 +27,7 @@ public class ActivitiesController : ControllerBase
     [HttpGet("{id}")] // api/activities/id
     public async Task<ActionResult<Activity>> GetActivity(Guid id)
     {
-        return await _dataContext.Activities.FindAsync(id);
+        return await Mediator.Send(new Details.Query() {Id = id});
     }
     
     /// <summary>
@@ -48,4 +39,39 @@ public class ActivitiesController : ControllerBase
     {
         return Ok("API is running.");
     }
+    
+    #endregion
+
+    #region Post
+
+    /// <summary>
+    /// Метод создает сущность
+    /// </summary>
+    /// <param name="activity">Обьект Активности</param>
+    /// <returns>Возвращает резульать выполнения команды</returns>
+    [HttpPost]
+    public async Task<ActionResult> CreateActivity(Activity activity)
+    {
+        return Ok(await Mediator.Send(new Create.Command() {Activity = activity}));
+    }
+
+    #endregion
+
+    #region Put
+
+    /// <summary>
+    /// Метод редактирует данные
+    /// </summary>
+    /// <param name="id">полученный id</param>
+    /// <param name="activity">полученный activity</param>
+    /// <returns>Возвращаем результат работы контроллера</returns>
+    [HttpPut("{id}")]
+    public async Task<ActionResult> EditActivityById(Guid id,Activity activity)
+    {
+        /* Устанавливаем id в пришедкий обьект activity и передаем его нашему обработчику */
+        activity.Id = id;
+        return Ok(await Mediator.Send(new Edit.Command() { Activity = activity }));
+    }
+
+    #endregion
 }

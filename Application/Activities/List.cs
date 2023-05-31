@@ -1,0 +1,40 @@
+﻿using System.Formats.Asn1;
+using Domain;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+
+namespace Application;
+
+/* Класс который делает общий запрос */
+public class List
+{
+    /* Класс Query является запросом, реализует интерфейс IRequest который возвращает список активностей.
+       В контексте интерфейса IRequest параметризированный тип <List<Activity>> указывает на то, что мы запаршиваем */
+    public class Query : IRequest<List<Activity>>{}
+
+    /*Это обработчик запроса Query, который будет выполняться при поступлении запроса типа Query
+      и будет возвращать список активностей. Так как наш запрос будет к данным из бд,
+      то мы должны внедрить через конструктор контекст данных*/
+    public class Handler : IRequestHandler<Query, List<Activity>>
+    {
+        private readonly DataContext _context;
+
+        public Handler(DataContext context)
+        {
+            _context = context;
+        }
+
+        /// <summary>
+        /// Обработчик запроса 
+        /// </summary>
+        /// <param name="request">Сам Запрос</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        /// <returns>Список активностей</returns>
+        public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
+        {
+            // ожидает возврат списка активнностей
+            return await _context.Activities.ToListAsync();
+        }
+    }
+}
