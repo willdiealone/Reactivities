@@ -1,4 +1,5 @@
 using Application;
+using Application.Core;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -22,6 +23,10 @@ builder.Services.AddDbContext<DataContext>(option =>
 
 /*  Создаем сервис медиарт и указываем тип где находится наш обработчик запроса */
 builder.Services.AddMediatR(typeof(List.Handler));
+
+/* Подключаем autoMapper в наши сервисы, указываем путь и указываем свойство Assembly
+  что говорит о том что мы хотим использовать нашу сборку чтобы найти все обьекты*/
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 /*  добавляем в сервис политику
   чтобы разрешить любой HTTP запрос */

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
@@ -14,10 +15,12 @@ public class Edit
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
-            
-            public Handler(DataContext context)
+            private readonly IMapper _mapper;
+
+            public Handler(DataContext context,IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
             
             /// <summary>
@@ -33,8 +36,8 @@ public class Edit
                 /* Возвращаем результат метода FindAsync() по id */
                 var activity = await _context.Activities.FindAsync(request.Activity.Id);
                 
-                /* Меняем Title у обьекта из бд если новый Title==null, то не меняем */
-                activity.Title = request.Activity.Title ?? activity.Title;
+                /* Используем autoMapper(сопоставляем свойства обьекта из запроса с обьектом из нашей бд) */
+                _mapper.Map(request.Activity, activity);
                 
                 /* метод SaveChangesAsync() "знает", какие изменения нужно сохранить,
                  потому что контекст базы данных отслеживает все изменения,
