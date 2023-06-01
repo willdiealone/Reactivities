@@ -14,9 +14,9 @@ public class ActivitiesController : BaseApiController
     /// </summary>
     /// <returns>Возвращаем коллекцию данных из Бд</returns>
     [HttpGet] // api/activities
-    public async Task<ActionResult<List<Activity>>> GetActivities()
+    public async Task<ActionResult<List<Activity>>> GetActivities(CancellationToken ct)
     {
-        return await Mediator.Send(new List.Query());
+        return await Mediator.Send(new List.Query(),ct);
     }
 
     /// <summary>
@@ -25,9 +25,9 @@ public class ActivitiesController : BaseApiController
     /// <param name="id">Конкретный айди</param>
     /// <returns>Данные по указанному id</returns>
     [HttpGet("{id}")] // api/activities/id
-    public async Task<ActionResult<Activity>> GetActivity(Guid id)
+    public async Task<ActionResult<Activity>> GetActivity(Guid id,CancellationToken ct)
     {
-        return await Mediator.Send(new Details.Query() {Id = id});
+        return await Mediator.Send(new Details.Query() {Id = id},ct);
     }
     
     /// <summary>
@@ -50,9 +50,9 @@ public class ActivitiesController : BaseApiController
     /// <param name="activity">Обьект Активности</param>
     /// <returns>Возвращает резульать выполнения команды</returns>
     [HttpPost]
-    public async Task<IActionResult> CreateActivity(Activity activity)
+    public async Task<IActionResult> CreateActivity(Activity activity,CancellationToken ct)
     {
-        return Ok(await Mediator.Send(new Create.Command {Activity = activity}));
+        return Ok(await Mediator.Send(new Create.Command {Activity = activity},ct));
     }
 
     #endregion
@@ -66,11 +66,11 @@ public class ActivitiesController : BaseApiController
     /// <param name="activity">полученный activity</param>
     /// <returns>Возвращаем результат работы контроллера</returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> EditActivityById(Guid id,Activity activity)
+    public async Task<IActionResult> EditActivityById(Guid id,Activity activity,CancellationToken ct)
     {
         /* Устанавливаем id в пришедкий обьект activity и передаем его нашему обработчику */
         activity.Id = id;
-        return Ok(await Mediator.Send(new Edit.Command { Activity = activity }));
+        return Ok(await Mediator.Send(new Edit.Command { Activity = activity },ct));
     }
 
     #endregion
@@ -83,9 +83,9 @@ public class ActivitiesController : BaseApiController
     /// <param name="id">Идентификатор по которому удаляем обьект Activity</param>
     /// <returns>Статус код</returns>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteActivityById(Guid id)
+    public async Task<IActionResult> DeleteActivityById(Guid id,CancellationToken ct)
     {
-        return Ok(await Mediator.Send(new Delete.Command{ Id = id }));
+        return Ok(await Mediator.Send(new Delete.Command{ Id = id },ct));
     }
 
     #endregion

@@ -1,5 +1,6 @@
 using Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application;
@@ -16,10 +17,12 @@ public class Create
         public class Handler : IRequestHandler<Command>
         {
             private readonly DataContext _context;
+            private readonly ILogger<Create> _logger;
 
-            public Handler(DataContext _context)
+            public Handler(DataContext _context,ILogger<Create> _logger)
             {
                 this._context = _context;
+                this._logger = _logger;
             }
             
             /// <summary>
@@ -32,6 +35,18 @@ public class Create
             /// давигаться дальше</returns>
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                try
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                }
+                catch (TaskCanceledException e)
+                {
+                    _logger.LogInformation("Task was canseled");
+                }
+                
                 /* Не используем AddAsync(), так как мы не подключаемся к базе данных, отсюда мы лишь
                    добавляем новый обьект в память */
                 _context.Activities.Add(request.Activity);

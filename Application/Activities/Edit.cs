@@ -1,6 +1,7 @@
 using AutoMapper;
 using Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application;
@@ -16,11 +17,13 @@ public class Edit
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
+            private readonly ILogger<Edit> _logger;
 
-            public Handler(DataContext context,IMapper mapper)
+            public Handler(DataContext context,IMapper mapper,ILogger<Edit> _logger)
             {
                 _context = context;
                 _mapper = mapper;
+                this._logger = _logger;
             }
             
             /// <summary>
@@ -33,6 +36,18 @@ public class Edit
             /// давигаться дальше</returns>
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
+                try
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                }
+                catch (TaskCanceledException e)
+                {
+                    _logger.LogInformation("Task was canseled");
+                }
+
                 /* Возвращаем результат метода FindAsync() по id */
                 var activity = await _context.Activities.FindAsync(request.Activity.Id);
                 

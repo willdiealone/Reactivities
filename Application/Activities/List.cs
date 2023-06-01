@@ -2,6 +2,7 @@
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 
 namespace Application;
@@ -19,10 +20,12 @@ public class List
     public class Handler : IRequestHandler<Query, List<Activity>>
     {
         private readonly DataContext _context;
+        private readonly ILogger<List> _logger;
 
-        public Handler(DataContext context)
+        public Handler(DataContext context,ILogger<List> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,6 +36,18 @@ public class List
         /// <returns>Список активностей</returns>
         public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
         {
+            try
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+            }
+            catch (TaskCanceledException e)
+            {
+                _logger.LogInformation("Task was canseled");
+            }
+            
             // ожидает возврат списка активнностей
             return await _context.Activities.ToListAsync();
         }
