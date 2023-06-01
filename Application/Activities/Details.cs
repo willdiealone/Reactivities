@@ -35,7 +35,7 @@ public class Details
                     cancellationToken.ThrowIfCancellationRequested();
                 }
             }
-            catch (TaskCanceledException e)
+            catch (Exception)
             {
                 _logger.LogInformation("Task was canseled");
             }
