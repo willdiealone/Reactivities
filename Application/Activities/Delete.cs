@@ -4,7 +4,9 @@ using Persistence;
 
 namespace Application;
 
-/* Класс удаления обьекта  */
+/// <summary>
+/// Класс удаления обьекта
+/// </summary>
 public class Delete
 {
     public class Command : IRequest

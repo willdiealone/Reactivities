@@ -5,7 +5,9 @@ using Persistence;
 
 namespace Application;
 
-/* Класс который делает более конкретный запрос */
+/// <summary>
+/// Класс который делает более конкретный запрос
+/// </summary>
 public class Details
 {
     public class Query : IRequest<Activity>
