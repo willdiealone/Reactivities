@@ -48,6 +48,12 @@ public class Edit
                     _logger.LogInformation("Task was canseled");
                 }
 
+                // Приводим дату к UTC
+                if (request.Activity.Date.Kind != DateTimeKind.Utc)
+                {
+                    request.Activity.Date = DateTime.SpecifyKind(request.Activity.Date, DateTimeKind.Utc);
+                }
+                
                 /* Возвращаем результат метода FindAsync() по id */
                 var activity = await _context.Activities.FindAsync(request.Activity.Id);
                 

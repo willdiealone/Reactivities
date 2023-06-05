@@ -2,6 +2,7 @@ using Domain;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using NpgsqlTypes;
 
 namespace Application;
 
@@ -47,6 +48,11 @@ public class Create
                     _logger.LogInformation("Task was canseled");
                 }
                 
+                // Приводим дату к UTC
+                if (request.Activity.Date.Kind != DateTimeKind.Utc)
+                {
+                    request.Activity.Date = DateTime.SpecifyKind(request.Activity.Date, DateTimeKind.Utc);
+                }
                 /* Не используем AddAsync(), так как мы не подключаемся к базе данных, отсюда мы лишь
                    добавляем новый обьект в память */
                 _context.Activities.Add(request.Activity);

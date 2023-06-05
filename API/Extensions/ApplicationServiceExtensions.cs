@@ -33,7 +33,10 @@ public static class ApplicationServiceExtensions
           {
                option.AddPolicy("CorsPolicy", policy =>
                {
-                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyMethod()
+                         .AllowAnyHeader()
+                         .WithOrigins("http://localhost:3000")
+                         .AllowCredentials();
                });
           });
 

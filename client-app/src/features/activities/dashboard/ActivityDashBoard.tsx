@@ -34,15 +34,18 @@ interface Props{
     // Функция handleDeleteActivity(id:string)
     deleteActivity:(id:string) => void;
 
+    // Флаг который следит за тем чтобы окно Details закрылось просле нажатия кнопки удалить
     closeActivitiDetailsIfDelete: boolean
-    
-    
-    
+
+    // Флаг который следит за тем чтобы форма редактирования(создания) закрылась после отправки(нажития кнопки) 
+    submitting: boolean
 }
 
 
-export default function ActivityDashboard({activities, selectedActivity, selectActivity, cancelSelectActivity,
-                                          editMode,closeForm, openForm,createOrEdit,deleteActivity,closeActivitiDetailsIfDelete} : Props){
+export default function ActivityDashboard({activities, selectedActivity,selectActivity,
+                                              submitting, cancelSelectActivity,editMode,
+                                              closeForm, createOrEdit, openForm,
+                                              deleteActivity,closeActivitiDetailsIfDelete} : Props){
     return(
         <Grid>
             <Grid.Column width='10'>
@@ -66,6 +69,7 @@ export default function ActivityDashboard({activities, selectedActivity, selectA
                 <ActivityForm closeForm={closeForm}
                               activity={selectedActivity}
                               createOrEdit={createOrEdit}
+                              submitting={submitting}
                 />}
             </Grid.Column>
         </Grid>
