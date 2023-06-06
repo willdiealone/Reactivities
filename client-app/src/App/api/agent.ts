@@ -44,7 +44,7 @@ const Activities ={
     details: (id:string) => response.get<Activity>(`Activities/${id}`),
     create: (activity: Activity) => response.post<void>('Activities', activity),
     update: (activity:Activity) => response.put<void>(`activities/${activity.id}`,activity),
-    delete: (id:string) => response.delete<void>(`Activity/${id}`),
+    delete: (id:string) => response.delete<void>(`activities/${id}`),
 };
 
 // Agents для экспорта кода из этого файла

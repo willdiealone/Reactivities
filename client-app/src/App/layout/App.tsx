@@ -101,8 +101,12 @@ function App() {
     // удаляет таким образом, что он просто пересоздает новый массив и сравнивает их по id.
     // В итоге туда залетают все элементы не равные нашему id который мы сравниваем
     function handleDeleteActivity(id: string) {
-      setActivities([...activities.filter(x=>x.id!==id)]);
-        setEditDetailsMode(false);
+      setSubmitting(true);
+      agent.Activities.delete(id).then(()=> {
+          setActivities([...activities.filter(x=>x.id!==id)])
+          setSubmitting(false);
+      })
+        //setEditDetailsMode(false);
     }
     
     if(loading) return <LoadingComponent content={'Loading app'} />
