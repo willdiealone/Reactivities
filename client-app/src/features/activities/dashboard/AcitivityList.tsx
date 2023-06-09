@@ -1,28 +1,14 @@
 import React, {SyntheticEvent, useState} from 'react';
-import {Activity} from "../../../App/models/activity";
 import {Button, Icon, Item, Label, Segment} from "semantic-ui-react";
-import {Simulate} from "react-dom/test-utils";
-import submit = Simulate.submit;
-interface Props{
-    
-    // Массив обьектов Activity
-    activities: Activity[];
-    
-    //function принимает обьект Activity по id
-    selectActivity: (id: string) => void;
+import { useStore } from '../../../App/stores/Store';
+import { observer } from 'mobx-react-lite';
 
-    // Функция handleDeleteActivity(id:string)
-    deleteActivity:(id:string) => void;
-
-    submitting: boolean;
-    
-    
-}
-
-export default function ActivityList({activities,selectActivity,deleteActivity,submitting}:Props){
+export default observer (function ActivityList(){
     
     const [target,setTarget] = useState('');
-    
+    const {activityStore} = useStore();
+    const {deleteActivity,loading,acitivityByDate,selectActivity} = activityStore;
+
     function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
         deleteActivity(id);
@@ -30,8 +16,8 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
     
     return(
         <Segment>
-            <Item.Group  devided="true">
-                {activities.map(activity=>(
+            <Item.Group devided="true">
+                {acitivityByDate.map(activity=>(
                     <Item key={activity.id}>
                         <Item.Content>
                             <Item.Header as='a'>{activity.title}</Item.Header>
@@ -44,8 +30,8 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
                                 <div>
                                 <Button 
                                     animated
-                                    class="right ui button"
-                                    onClick={ () => selectActivity(activity.id)}
+                                    className="right ui button"
+                                    onClick={ () => {selectActivity(activity.id)}}
                                     floated='right'
                                     color='blue' >
                                     <Button.Content visible>View</Button.Content>
@@ -55,12 +41,11 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
                                 </Button>
                                  <Button 
                                      name={activity.id}
-                                     animated 
-                                     loading={submitting && target === activity.id}
-                                     class="ui button right"
+                                     animated='vertical'
+                                     loading={loading && target === activity.id}
+                                     className="ui button right"
                                      onClick={(e)=> handleActivityDelete(e,activity.id)}
                                      floated='right'
-                                     content='Delete'
                                      color='red'>
                                 <Button.Content visible>Delete</Button.Content>
                                 <Button.Content hidden>
@@ -76,4 +61,4 @@ export default function ActivityList({activities,selectActivity,deleteActivity,s
             </Item.Group>
         </Segment>
     )
-}
+})

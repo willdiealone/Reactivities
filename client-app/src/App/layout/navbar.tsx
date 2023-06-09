@@ -1,19 +1,14 @@
 import React from 'react';
 import {Button, Container, Menu} from "semantic-ui-react";
+import { useStore } from '../stores/Store';
  
-interface Props{
 
-    // Функция  handleSelectActivity(id)
-    openForm: () => void;
-}
+export default function NavBar(){
+    
+    const {activityStore}=useStore();
 
-export default function NavBar({openForm}:Props){
     return(
-        /* Button positive => сделает кнопку зеленой
-        * Menu inverted fixed='top => обратные цвета, фиксированная позиция сверху
-        * Menu.Item header => заголовок
-        * img src="/assets/logo.png" alt="logo" => источник, альтернативный текст
-        * style={{marginRight: '10px'}} => отступ справа 10 пикс. */
+        
         <Menu inverted fixed='top'>
             <Container>
                 <Menu.Item header>
@@ -22,7 +17,10 @@ export default function NavBar({openForm}:Props){
                 </Menu.Item>
                 <Menu.Item name='Activities'/>
                 <Menu.Item>
-                    <Button onClick={openForm} positive content='Create Activity' />
+                    <Button animated='fade' onClick={() => activityStore.openForm()} color='green'>
+                        <Button.Content  visible>Create Activity</Button.Content>
+                        <Button.Content hidden>user plus</Button.Content>
+                    </Button>
                 </Menu.Item>
             </Container>
         </Menu>

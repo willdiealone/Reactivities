@@ -1,78 +1,29 @@
 import React from 'react';
 import {Grid} from "semantic-ui-react";
-import {Activity} from "../../../App/models/activity";
 import ActivityList from "./AcitivityList";
 import ActivityDetails from "../../details/ActivityDetails";
 import ActivityForm from "../form/ActivityForm";
+import { useStore } from '../../../App/stores/Store';
+import { observer } from 'mobx-react-lite';
 
-interface Props{
+export default observer (function ActivityDashboard(){
     
-    // Массив обьектов Activity 
-    activities: Activity[];
-    
-    // Выбранный обьект Activity
-    selectedActivity: Activity | undefined;
-    
-    //Функция handleSelectActivity(id: string)
-    selectActivity: (id: string) => void;
-    
-    // Функция hanldeCancelSelectActivity()
-    cancelSelectActivity:() => void;
-    
-    // Переменная хука
-    editMode: boolean
-
-    // Функция  handleSelectActivity(id)
-    openForm: (id:string) => void;
-
-    // Функция handleFormClose()
-    closeForm:() => void;
-
-    // Функция handleCreateEditOrActivity
-    createOrEdit: (activity:Activity) => void;
-
-    // Функция handleDeleteActivity(id:string)
-    deleteActivity:(id:string) => void;
-
-    // Флаг который следит за тем чтобы окно Details закрылось просле нажатия кнопки удалить
-    closeActivitiDetailsIfDelete: boolean
-
-    // Флаг который следит за тем чтобы форма редактирования(создания) закрылась после отправки(нажития кнопки) 
-    submitting: boolean
-}
-
-
-export default function ActivityDashboard({activities, selectedActivity,selectActivity,
-                                              submitting, cancelSelectActivity,editMode,
-                                              closeForm, createOrEdit, openForm,
-                                              deleteActivity,closeActivitiDetailsIfDelete} : Props){
+    const {activityStore} = useStore();                                            
+    const {selectedActivity, editMode} = activityStore;                                           
     return(
+        
         <Grid>
             <Grid.Column width='10'>
-           <ActivityList activities={activities}
-                         selectActivity={selectActivity}
-                         deleteActivity={deleteActivity}
-                         submitting={submitting}
-           />
+           <ActivityList/>
             </Grid.Column>
+
             <Grid.Column width='6'>
-                {/* Проверка для окна Details (если в selectedActivity что-то есть, то выполняется ActivityDetails,
-                а если нет то не выполняется, соответсвенно окно подгружается только тогда когда мы нажимаем на кнопку view
-                в функции ActivityList в которой выполняется функция selectActivity которая возвращает обьект по id и после этого
-                если как раз если selectedActivity не null, то ActivityDetails, когда нажимаем кнопку cancel идет функция
-                  cancelSelectActivity которая selectedActivity делает null и ActivityDetails не выполняется)*/
-                    selectedActivity && !editMode && closeActivitiDetailsIfDelete &&
-            <ActivityDetails activity={selectedActivity}
-                             cancelSelectActivity={cancelSelectActivity}
-                             openForm={openForm}
-            />}
+                {selectedActivity && !editMode && 
+            <ActivityDetails />} 
+
                 {editMode &&
-                <ActivityForm closeForm={closeForm}
-                              activity={selectedActivity}
-                              createOrEdit={createOrEdit}
-                              submitting={submitting}
-                />}
+                <ActivityForm />}
             </Grid.Column>
         </Grid>
     )
-}
+})

@@ -1,24 +1,12 @@
 import React, {ChangeEvent, useState} from "react";
 import {Button, Form, Segment} from "semantic-ui-react";
-import {Activity} from "../../../App/models/activity";
+import { useStore } from "../../../App/stores/Store";
+import { observer } from "mobx-react-lite";
 
-interface Props{
-    
-    // Обьект Activity
-    activity: Activity | undefined;
+export default observer (function ActivityForm(){
 
-    // Функция которая закрывает форму редактирования и устанавливает editMode в false
-    closeForm:() => void;
-
-    // Функция handleCreateEditOrActivity
-    createOrEdit: (activity:Activity) => void;
-
-    // Флаг который следит за тем чтобы форма редактирования(создания) закрылась после отправки(нажития кнопки) 
-    submitting: boolean
-    
-}
-
-export default function ActivityForm({activity: selectedActivity,closeForm,createOrEdit,submitting}:Props){
+    const {activityStore} = useStore();
+    const {selectedActivity,loading,createActivity,updateActivity} = activityStore;
     
     const initialState = selectedActivity ?? {
         id: '',
@@ -32,8 +20,9 @@ export default function ActivityForm({activity: selectedActivity,closeForm,creat
     
     const [activity,setActivity] = useState(initialState)
     
+    // передаем на обьект в зависимости от наличия у него id
     function handleSubmit(){
-        createOrEdit(activity);
+        activity.id ? updateActivity(activity) : createActivity(activity);
     }
     
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>){
@@ -51,11 +40,11 @@ export default function ActivityForm({activity: selectedActivity,closeForm,creat
                 <Form.Input placeholder='City' value={activity.city} name='city' onChange={handleInputChange}/>
                 <Form.Input placeholder='Venue' value={activity.venue} name='venue' onChange={handleInputChange}/>
                 <div className="ui buttons">
-                <Button class="ui button" loading={submitting} floated='right' positive type='submit' content='Submit'/>
+                <Button className="ui button" loading={loading} floated='right' positive type='submit' content='Submit'/>
                 <div className="or"></div>
-                <Button class="ui button" onClick={closeForm} floated='right'  type='button' content='Cansel'/>
+                <Button className="ui button" onClick={ () => activityStore.closeForm()} floated='right'  type='button' content='Cansel'/>
                 </div>
             </Form>
         </Segment>
     )
-}
+})

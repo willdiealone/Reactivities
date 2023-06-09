@@ -1,21 +1,14 @@
 import React from 'react';
 import {Button, Card, Image} from "semantic-ui-react";
-import {Activity} from "../../App/models/activity";
-interface Props{
-    
-    // Обьект Activity
-    activity: Activity
-    
-    // Ничего не пиринмае и ничего не возвращает
-    cancelSelectActivity:() => void;
+import { useStore } from '../../App/stores/Store';
+import LoadingComponent from '../../App/layout/LoadingComponent';
 
-    // Функция которая открывает форму редактирования если принимает по id элемент то вызывает функцию handleSelectActivity(id)
-    // и устанавливает editMode в true, а если не принимает то вызывает hanldeCancelSelectActivity() 
-    openForm: (id:string) => void;
-    
-}
+export default function ActivityDetails(){
 
-export default function ActivityDetails({activity, cancelSelectActivity,openForm}: Props){
+    const {activityStore} = useStore();
+    const {selectedActivity: activity} = activityStore;
+
+    if(!activity) return <LoadingComponent/>;
     
     return (
         <Card fluid>
@@ -31,8 +24,8 @@ export default function ActivityDetails({activity, cancelSelectActivity,openForm
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2' >
-                    <Button onClick={ () => openForm(activity.id)} basic color='blue' content='Edit'/>
-                    <Button onClick={() => cancelSelectActivity()} basic color='grey' content='Cancel'/>
+                    <Button  onClick={ () => activityStore.openForm(activity.id)} basic color='blue' content='Edit'/>
+                    <Button onClick={() => activityStore.canselSelectedAvtivity()} basic color='grey' content='Cancel'/>
                 </Button.Group>
             </Card.Content>
         </Card>
