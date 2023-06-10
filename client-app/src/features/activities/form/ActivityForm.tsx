@@ -1,14 +1,22 @@
-import React, {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import {Button, Form, Segment} from "semantic-ui-react";
 import { useStore } from "../../../App/stores/Store";
 import { observer } from "mobx-react-lite";
+import { useParams } from "react-router-dom";
+import { Activity } from "../../../App/models/activity";
+import LoadingComponent from "../../../App/layout/LoadingComponent";
 
 export default observer (function ActivityForm(){
 
     const {activityStore} = useStore();
-    const {selectedActivity,loading,createActivity,updateActivity} = activityStore;
-    
-    const initialState = selectedActivity ?? {
+    const {loading,createActivity,updateActivity,
+        loadActivity,loadingInitial} = activityStore;
+
+        // считываем id из url
+    const {id} = useParams();    
+
+    // хук который инициализилизирует activity пустой строкой
+    const [activity,setActivity] = useState<Activity>({
         id: '',
         title: '',
         date: '',
@@ -16,9 +24,12 @@ export default observer (function ActivityForm(){
         category: '',
         city: '',
         venue: ''
-    }
+    });
     
-    const [activity,setActivity] = useState(initialState)
+    // хук который проверяет есть ли у нас id, если есть закидываем activity в хук useState
+    useEffect(() => {
+        if (id) loadActivity(id).then(activity => setActivity(activity!))
+    },[id,loadActivity])
     
     // передаем на обьект в зависимости от наличия у него id
     function handleSubmit(){
@@ -30,6 +41,8 @@ export default observer (function ActivityForm(){
         setActivity({...activity,[name]:value})
     }
     
+    if (loadingInitial) return <LoadingComponent content = 'Loading activity...'/>
+
     return(
         <Segment clearing>
             <Form onSubmit={handleSubmit} autoComplete='off'>
@@ -42,7 +55,7 @@ export default observer (function ActivityForm(){
                 <div className="ui buttons">
                 <Button className="ui button" loading={loading} floated='right' positive type='submit' content='Submit'/>
                 <div className="or"></div>
-                <Button className="ui button" onClick={ () => activityStore.closeForm()} floated='right'  type='button' content='Cansel'/>
+                <Button className="ui button" floated='right'  type='button' content='Cansel'/>
                 </div>
             </Form>
         </Segment>
