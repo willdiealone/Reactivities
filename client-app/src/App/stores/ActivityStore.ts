@@ -9,7 +9,7 @@ export default class ActivityStore {
     selectedActivity: Activity | undefined = undefined;
     editMode: boolean = false;
     loading: boolean = false;
-    loadingInitial: boolean = true;
+    loadingInitial: boolean = false;
 
 
     // конструктор класса в котором мы устанавливаем
@@ -25,14 +25,14 @@ export default class ActivityStore {
    }
 
 
-    // Метод который делает асинхронный запрос,
+    // функция которая делает асинхронный запрос,
     // форматирует дату и отправяет элементы в коллекцию activityRegistry
-    loadingActivities = async () => {        
+    loadingActivities = async () => {      
+        this.setLoadingInitial(true);  
         try {            
             const activities = await agent.Activities.list();
             activities.forEach(activity => {
-                 activity.date = activity.date.split('T')[0];
-                 this.activityRegistry.set(activity.id,activity);
+                this.setActivity(activity);
             })
         this.setLoadingInitial(false);
         } catch (error) {
@@ -41,33 +41,43 @@ export default class ActivityStore {
         }
     }
 
+    // функция которая делает асинхронный запрос в бд
+    loadActivity = async (id: string) => {
+        let activity = this.getActivity(id);
+        if(activity){
+            this.selectedActivity = activity;
+            return activity;
+        }
+        else{
+            this.setLoadingInitial(true);
+            try {
+                activity = await agent.Activities.details(id);
+                this.setActivity(activity);
+                this.selectedActivity = activity;
+                this.setLoadingInitial(false);
+                return activity;
+            } catch (error) {
+                console.log(error)
+                this.setLoadingInitial(false);
+            }
+        }
+    }
+
+    // функиция которая изменяет дату обьекта и кладет его в коллекцию
+    private setActivity = (activity: Activity) => {
+        activity.date = activity.date.split('T')[0];
+        this.activityRegistry.set(activity.id,activity);
+    }
+
+    // функция которая возвращает элемент коллекции по id
+    private getActivity = (id: string) => {
+        return this.activityRegistry.get(id);
+    }
+
     // функция которая хранит состояние загрузки интерфейса
     setLoadingInitial = (state:boolean) => {
         this.loadingInitial = state;
-    }
-
-    // функция которая сохраняет в переменную элемент по id
-    selectActivity = (id: string) => {
-        this.selectedActivity = this.activityRegistry.get(id);
-    }
-
-    // функция делает selectedActivity undefined
-    canselSelectedAvtivity = () => {
-        this.selectedActivity = undefined;
-    }
-
-    // функция которая проверяет если есть id то вызов функции selectActivity(id)
-    // если нет, то canselSelectedAvtivity().
-    openForm = (id?: string) => {
-        id ? this.selectActivity(id) : this.canselSelectedAvtivity();
-        this.editMode = true;
-    }
-
-    // функция которая закрывает форму редактирования флагом editMode = false
-    closeForm = () => {
-        this.editMode = false;
-        
-    }
+    }     
 
     // создает обьект который пришел параметром, отправяет его в бд и добавляет в нашу коллекцию
     createActivity = async (activity: Activity) => {
@@ -110,8 +120,7 @@ export default class ActivityStore {
         try {
             await agent.Activities.delete(id);
             runInAction(() => {
-                this.activityRegistry.delete(id);
-                if (this.selectedActivity?.id === id) this.canselSelectedAvtivity();             
+                this.activityRegistry.delete(id);            
                 this.loading = false;
             })
         } catch (error) {

@@ -220,5 +220,7 @@
             "scope": "workspace"
         }
     },
-    "dotnet.defaultSolution": "Reactivities.sln"
+    "dotnet.defaultSolution": "Reactivities.sln",
+    "commentTranslate.targetLanguage": "ru",
+    "commentTranslate.multiLineMerge": false
 }

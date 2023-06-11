@@ -16,7 +16,7 @@ public class ActivitiesController : BaseApiController
     [HttpGet] // api/activities
     public async Task<ActionResult<List<Activity>>> GetActivities(CancellationToken ct)
     {
-        return await Mediator.Send(new List.Query(),ct);
+        return Ok(await Mediator.Send(new List.Query(),ct));
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class ActivitiesController : BaseApiController
     [HttpGet("{id}")] // api/activities/id
     public async Task<ActionResult<Activity>> GetActivity(Guid id,CancellationToken ct)
     {
-        return await Mediator.Send(new Details.Query() {Id = id},ct);
+        return Ok(await Mediator.Send(new Details.Query() {Id = id},ct));
     }
     
     /// <summary>
@@ -66,7 +66,7 @@ public class ActivitiesController : BaseApiController
     /// <param name="activity">полученный activity</param>
     /// <returns>Возвращаем результат работы контроллера</returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> EditActivityById(Guid id,Activity activity,CancellationToken ct)
+    public async Task<IActionResult> EditActivityById(Guid id, Activity activity,CancellationToken ct)
     {
         /* Устанавливаем id в пришедкий обьект activity и передаем его нашему обработчику */
         activity.Id = id;
