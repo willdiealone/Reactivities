@@ -1,5 +1,7 @@
 using Application;
 using Application.Core;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -18,14 +20,9 @@ public static class ApplicationServiceExtensions
           services.AddDbContext<DataContext>(option =>
           {
                option.UseNpgsql(config.GetConnectionString("DefaultConnectionString"));
-          });
+          });               
 
-          /*  Создаем сервис медиарт и указываем тип где находится наш обработчик запроса */
-          services.AddMediatR(typeof(List.Handler));
-
-          /* Подключаем autoMapper в наши сервисы, указываем путь и указываем свойство Assembly
-          что говорит о том что мы хотим использовать нашу сборку чтобы найти все обьекты*/
-          services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+          services.AddSwaggerGen();
 
           /*  добавляем в сервис политику
           чтобы разрешить любой HTTP запрос */
@@ -40,8 +37,15 @@ public static class ApplicationServiceExtensions
                });
           });
 
-          /* Добавляем сервис сваггер */
-          services.AddSwaggerGen();
+           /*  Создаем сервис медиарт и указываем тип где находится наш обработчик запроса */
+          services.AddMediatR(typeof(List.Handler));    
+
+          /* Подключаем autoMapper в наши сервисы, указываем путь и указываем свойство Assembly
+          что говорит о том что мы хотим использовать нашу сборку чтобы найти все обьекты*/
+          services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+          services.AddFluentValidationAutoValidation();
+          services.AddValidatorsFromAssemblyContaining<Create>();
 
           return services;
      }
