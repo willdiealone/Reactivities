@@ -1,6 +1,5 @@
 using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Persistence;
 

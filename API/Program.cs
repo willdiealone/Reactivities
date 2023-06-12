@@ -36,7 +36,6 @@ app.MapControllers();
 
 #region WorkWithDB
 
-
 /* Создаем область для того чтобы создать зависимость для нашей базы данных */
 using var scope = app.Services.CreateScope();
 
