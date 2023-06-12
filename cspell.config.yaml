@@ -2,7 +2,8 @@ version: "0.2"
 ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
-words: []
+words:
+  - carbonplaceholder
 ignoreWords:
   - devided
   - добавляет

@@ -1,9 +1,13 @@
-import {Button, Card, Image} from "semantic-ui-react";
+import {Grid} from "semantic-ui-react";
 import { useStore } from '../../App/stores/Store';
 import LoadingComponent from '../../App/layout/LoadingComponent';
 import { observer } from "mobx-react-lite";
-import { NavLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import ActivityDetailedHeader from "./ActivityDetailsHeader";
+import ActivityDetailedInfo from "./ActivityDetailedInfo";
+import ActivityDetailedChat from "./ActivityDetailedChat";
+import ActivityDetailedSideBar from "./ActivityDetailedSideBar";
 
 export default observer (function ActivityDetails(){
 
@@ -21,7 +25,20 @@ export default observer (function ActivityDetails(){
     if(loadingInitial || !activity) return <LoadingComponent/>;
     
     return (
-        <Card fluid>
+        <Grid>
+            <Grid.Column width={10}>
+                <ActivityDetailedHeader activity={activity}/>
+                <ActivityDetailedInfo activity={activity}/>
+                <ActivityDetailedChat/>
+            </Grid.Column>
+            <Grid.Column width={6}>
+                <ActivityDetailedSideBar/>
+            </Grid.Column>
+        </Grid>
+    )
+})
+
+{/* <Card fluid>
             <Image src={`/assets/categoryImages/${activity.category}.jpg`} wrapped ui={false} />
             <Card.Content>
                 <Card.Header>{activity.title}</Card.Header>
@@ -38,6 +55,4 @@ export default observer (function ActivityDetails(){
                     <Button as={NavLink} to='/activities' basic color='grey' content='Back'/>
                 </Button.Group>
             </Card.Content>
-        </Card>
-    )
-})
+        </Card> */}
