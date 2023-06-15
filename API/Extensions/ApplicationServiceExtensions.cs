@@ -35,8 +35,8 @@ public static class ApplicationServiceExtensions
                          .WithOrigins("http://localhost:3000")
                          .AllowCredentials();
                });
-          });
-
+          });          
+         
            /*  Создаем сервис медиарт и указываем тип где находится наш обработчик запроса */
           services.AddMediatR(typeof(List.Handler));    
 

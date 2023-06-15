@@ -1,6 +1,8 @@
+global using Activity = Domain.Activity;
 using API.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+
 
 /* Создаем WebApplicationBuilder */
 var builder = WebApplication.CreateBuilder(args);
