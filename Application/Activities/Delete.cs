@@ -1,3 +1,4 @@
+using Application.Core;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
@@ -9,47 +10,33 @@ namespace Application;
 /// </summary>
 public class Delete
 {
-    public class Command : IRequest
+    public class Command : IRequest<Result<Unit>>
     {
-        /// <summary>
-        /// Id по которому будем находить обьект что бы удалить
-        /// </summary>
         public Guid Id { get; set; }
-
     }
 
-    public class Handler : IRequestHandler<Command>
+    public class Handler : IRequestHandler<Command,Result<Unit>>
     {
-        private readonly DataContext _context;
-        private readonly ILogger<Delegate> _logger;
+        private readonly DataContext _context;        
 
-        public Handler(DataContext _context, ILogger<Delegate> _logger)
+        public Handler(DataContext _context)
         {
-            this._context = _context;
-            this._logger = _logger;
+            this._context = _context;            
         }
 
-        public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-            }
-            catch (Exception)
-            {
-                _logger.LogInformation("Task was canseled");
-            }
-            var activity = await _context.Activities.FindAsync(request.Id);
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
+        {            
+            var activity = await _context.Activities.FindAsync(new object[] {request.Id}, cancellationToken);
+
+            if (activity == null) return null;
 
             _context.Remove(activity);
 
-            await _context.SaveChangesAsync();
+            var result =  await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            return Unit.Value;
+            if (!result) Result<Unit>.Failure("Failed to delete");
+
+            return Result<Unit>.Success(Unit.Value);
         }
     }
-
 }

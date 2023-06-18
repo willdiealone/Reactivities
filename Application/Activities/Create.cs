@@ -1,4 +1,5 @@
 using Application.Activities;
+using Application.Core;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -7,11 +8,9 @@ using Persistence;
 
 namespace Application;
 
-/* Класс создания сущности (Activity) */
 public class Create
-{
-    /* Комманды ничего не возвращают(только изменяют данные)*/
-    public class Command : IRequest
+{   
+    public class Command : IRequest<Result<Unit>>
     {
         public Activity Activity { get; set; }
 
@@ -23,54 +22,31 @@ public class Create
             RuleFor( x => x.Activity).SetValidator(new ActivityValidator());
         }
     }
-
-    /* Обработчик команды*/
-    public class Handler : IRequestHandler<Command>
+ 
+    public class Handler : IRequestHandler<Command,Result<Unit>>
     {
-        private readonly DataContext _context;
-        private readonly ILogger<Create> _logger;
+        private readonly DataContext _context;        
 
-        public Handler(DataContext _context, ILogger<Create> _logger)
+        public Handler(DataContext _context)
         {
             this._context = _context;
-            this._logger = _logger;
         }
 
-        /// <summary>
-        /// Метод выполняет команду
-        /// </summary>
-        /// <param name="request">Команда</param>
-        /// <param name="cancellationToken">Токен отмены</param>
-        /// <returns>специальным типом, который представляет отсутствие значения
-        /// (аналогично void в синхронных методах), но сообщает нашему api, что можем
-        /// давигаться дальше</returns>
-        public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
         {
-            try
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-            }
-            catch (Exception)
-            {
-                _logger.LogInformation("Task was canseled");
-            }
-
             // Приводим дату к UTC
             if (request.Activity.Date.Kind != DateTimeKind.Utc)
             {
                 request.Activity.Date = DateTime.SpecifyKind(request.Activity.Date, DateTimeKind.Utc);
             }
 
-            /* Не используем AddAsync(), так как мы не подключаемся к базе данных, отсюда мы лишь
-               добавляем новый обьект в память */
             _context.Activities.Add(request.Activity);
 
-            await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            return Unit.Value;
+            if(!result) return Result<Unit>.Failure("Failed to Create");
+
+            return Result<Unit>.Success(Unit.Value);
         }
     }
 

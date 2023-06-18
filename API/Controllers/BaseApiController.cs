@@ -1,3 +1,4 @@
+using Application.Core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +10,22 @@ public class BaseApiController : ControllerBase
 {
     private IMediator _mediator;
     
-    /* Тут мы просто получаем нас серивис IMediator и делаем его доступым из свойства Mediator
-     для класов наследников*/    
+    
     protected IMediator Mediator =>
         _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 
+    
+    protected IActionResult HandleResult<T>(Result<T> result){
+        if (result == null) 
+            return NotFound();
+
+         if (result.IsSuccess && result.Value != null)
+            return Ok(result.Value);
+
+        if (result.IsSuccess && result.Value == null) 
+            return NotFound();
+
+        return BadRequest(result.Error);
+    }
+
 }
-/* */

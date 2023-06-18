@@ -1,17 +1,20 @@
 import ActivityStore from "./ActivityStore";
 import {createContext, useContext} from "react";
+import CommonStore from "./commonStore";
 
 
-// создание интерфейса activityStore ActivityStore
+/* создание интерфейса activityStore ActivityStore и commonStore CommonStore*/ 
 interface Store {
     activityStore: ActivityStore
+    commonStore: CommonStore
 }
 
 
 
-// константа которая имеет в свойстве новый обьект ActivityStore()
+/* константа которая имеет в свойстве новый обьект ActivityStore() и CommonStore() */
 export const store: Store = {
-    activityStore: new ActivityStore()
+    activityStore: new ActivityStore(),
+    commonStore: new CommonStore()
 };
 
 

@@ -5,6 +5,8 @@ import reportWebVitals from './reportWebVitals';
 import { StoreContext, store } from './App/stores/Store';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './App/router/Router';
+import 'react-toastify/dist/ReactToastify.min.css';
+import 'react-calendar/';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

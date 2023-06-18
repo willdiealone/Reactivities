@@ -1,5 +1,9 @@
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {Activity} from "../models/activity";
+import {toast} from "react-toastify";
+import {router} from "../router/Router";
+import {store} from "../stores/Store";
+
 
 
 // задаем базовый урл
@@ -16,15 +20,46 @@ const sleep = (delay: number) => {
 };
 
 
-// вызываем задержку после и возвращаем данные
+/* вызываем задержку после получения ответа или проверяем error на статус код */ 
 axios.interceptors.response.use(async response => {
-    try {
-        await sleep(1000);
-        return response
-    } catch (Error) {
-        console.log(Error)
-        return Promise.reject(Error)
+    
+    await sleep(1000);
+    return response
+    
+}, (error: AxiosError) => {
+    const {data, status, config} = error.response as AxiosResponse;
+    switch (status) {
+        /* не верный запрос */
+        case 400: 
+            if(config.method === 'get' && data.errors.hasOwnProperty('id')){
+                router.navigate('/not-found');
+            }
+            if(data.errors){
+                const modalStateErrors = [];
+                for (const key in data.errors){
+                    if(data.errors[key]){
+                        modalStateErrors.push(data.errors[key]);
+                    }
+                }
+                throw modalStateErrors.flat();
+            }
+            else{
+                toast.error(data);
+            }             
+            break;
+        case 401: toast.error('unauthorized') /* ошибка аутентификации */ 
+            break;
+        case 403: toast.error('forbidden') /* ошибка авторизации */ 
+            break;
+        case 404: router.navigate('/not-found') /* не найдено */
+            break;
+        case 500: store.commonStore.setServerError(data); 
+            router.navigate('/server-error')  /* ошика сервера */
+            break;
+        default: 
+            break;
     }
+    return Promise.reject(error);
 });
 
 // константа которая имеет методы crud и передает данные в responseBody
@@ -38,7 +73,7 @@ const response =  {
     delete: <T> (url:string) => axios.delete<T>(url).then(responseBody),
 }
 
-// обьект который хранит в себе методы
+/* обьект который хранит в себе методы */
 const Activities ={
     list: () => response.get<Activity[]>('Activities'),
     details: (id:string) => response.get<Activity>(`Activities/${id}`),
@@ -47,7 +82,7 @@ const Activities ={
     delete: (id:string) => response.delete<void>(`activities/${id}`),
 };
 
-// Agents для экспорта кода из этого файла
+/* Agents для экспорта кода из этого файла */
 const agent = {
     Activities
 }

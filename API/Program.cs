@@ -1,5 +1,6 @@
 global using Activity = Domain.Activity;
 using API.Extensions;
+using API.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -20,6 +21,9 @@ builder.Services.AddApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 #region Middleware
+
+/* ловим exeption на выходе */
+app.UseMiddleware<ExeptionMiddleware>();
 
 /* Другая основная область здесь — это часть, предназначенная для настройки конвейера HTTP-запросов.*/
 if (app.Environment.IsDevelopment())

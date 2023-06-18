@@ -222,5 +222,6 @@
     },
     "dotnet.defaultSolution": "Reactivities.sln",
     "commentTranslate.targetLanguage": "ru",
-    "commentTranslate.multiLineMerge": false
+    "commentTranslate.multiLineMerge": false,
+    "commentTranslate.source": "Google"
 }

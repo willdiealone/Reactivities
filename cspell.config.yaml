@@ -6,6 +6,7 @@ words:
   - carbonplaceholder
 ignoreWords:
   - devided
+  - более
   - добавляет
   - изменился
   - инициализилизирует
