@@ -31,8 +31,14 @@ axios.interceptors.response.use(async response => {
     switch (status) {
         /* не верный запрос */
         case 400: 
-            if(config.method === 'get' && data.errors.hasOwnProperty('id')){
-                router.navigate('/not-found');
+            // if(config.method === 'get' && data.errors.hasOwnProperty('id')){
+            //     router.navigate('/not-found');
+            // }
+            if(config.url?.includes('activities/notaguid')){
+                router.navigate('/not-found')
+            }
+            if (config.url?.includes('buggy/bad-request')){
+                toast.error(data);
             }
             if(data.errors){
                 const modalStateErrors = [];
@@ -43,11 +49,8 @@ axios.interceptors.response.use(async response => {
                 }
                 throw modalStateErrors.flat();
             }
-            else{
-                toast.error(data);
-            }             
             break;
-        case 401: toast.error('unauthorized') /* ошибка аутентификации */ 
+        case 401: toast.error('unauthorised') /* ошибка аутентификации */ 
             break;
         case 403: toast.error('forbidden') /* ошибка авторизации */ 
             break;
