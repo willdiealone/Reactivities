@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Activity } from "../models/activity";
 import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
+import {format} from "date-fns";
 
 export default class ActivityStore {
 
@@ -21,7 +22,7 @@ export default class ActivityStore {
     // функция сортирует нашу коллекцию по дате
     get acitivityByDate() {
         return Array.from(this.activityRegistry.values()).sort((a, b) =>
-            Date.parse(a.date) - Date.parse(b.date));
+            a.date!.getTime() - b.date!.getTime());
     }
 
 
@@ -35,7 +36,7 @@ export default class ActivityStore {
     get groupedActivities() {
         return Object.entries(
             this.acitivityByDate.reduce((activities, activity) => {
-                const date = activity.date;
+                const date = format(activity.date!,'dd MMM yyyy'); 
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
                 return activities;
             }, {} as { [key: string]: Activity[] })
@@ -63,7 +64,9 @@ export default class ActivityStore {
     loadActivity = async (id: string) => {
         let activity = this.getActivity(id);
         if (activity) {
-            this.selectedActivity = activity;
+            runInAction(()=>{
+                this.selectedActivity = activity;
+            })
             return activity;
         }
         else {
@@ -71,7 +74,9 @@ export default class ActivityStore {
             try {
                 activity = await agent.Activities.details(id);
                 this.setActivity(activity);
-                this.selectedActivity = activity;
+                runInAction(()=>{
+                    this.selectedActivity = activity;
+                })
                 this.setLoadingInitial(false);
                 return activity;
             } catch (error) {
@@ -83,7 +88,7 @@ export default class ActivityStore {
 
     // функиция которая изменяет дату обьекта и кладет его в коллекцию
     private setActivity = (activity: Activity) => {
-        activity.date = activity.date.split('T')[0];
+        activity.date = new Date (activity.date!)
         this.activityRegistry.set(activity.id, activity);
     }
 
