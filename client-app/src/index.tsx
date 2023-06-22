@@ -7,6 +7,8 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './App/router/Router';
 import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-calendar/';
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

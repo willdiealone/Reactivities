@@ -20,7 +20,8 @@ public static class ApplicationServiceExtensions
           services.AddDbContext<DataContext>(option =>
           {
                option.UseNpgsql(config.GetConnectionString("DefaultConnectionString"));
-          });               
+          });     
+          
 
           services.AddSwaggerGen();
 
