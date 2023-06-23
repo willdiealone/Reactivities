@@ -1,4 +1,7 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
+
+// ReSharper disable CommentTypo
 
 namespace Persistence;
 
@@ -8,9 +11,24 @@ public class Seed
     /// Метод добавляет данные в бд
     /// </summary>
     /// <param name="context">обьектБД</param>
-    public static async Task SeedData(DataContext context) 
-    { 
-        // Проверяем есть ли какието записи в нашей бд, если да, то выходим если нет, то добавляем эти
+    /// <param name="userManager"></param>
+    public static async Task SeedData(DataContext context,UserManager<AppUser> userManager)
+    {
+        if (!userManager.Users.Any())
+        {
+            var users = new List<AppUser>()
+            {
+                new(){DisplayName = "Bob", UserName = "bob",Email = "bob@test.com"},
+                new(){DisplayName = "Alex", UserName = "alex",Email = "alex@test.com"},
+                new(){DisplayName = "Tom", UserName = "tom",Email = "tom@test.com"},
+                new(){DisplayName = "Sidni", UserName = "sidni",Email = "sidni@test.com"}
+            };
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user,"Password");
+            }
+        }
+
         if (context.Activities.Any()) return;
         
         var activities = new List<Activity> 
@@ -107,6 +125,7 @@ public class Seed
                 Venue = "Cinema",
             }
         };
+        
         await context.Activities.AddRangeAsync(activities);
         await context.SaveChangesAsync();
     }

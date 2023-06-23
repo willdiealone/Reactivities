@@ -1,9 +1,13 @@
 global using Activity = Domain.Activity;
 using API.Extensions;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-
+// ReSharper disable CommentTypo
 
 /* Создаем WebApplicationBuilder */
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +15,21 @@ var builder = WebApplication.CreateBuilder(args);
 #region DI
 
 /*  В этом месте мы добавляем сервисы в контейнер */
-builder.Services.AddControllers();
+builder.Services.AddControllers(option =>
+{
+    /* настраиваем политику (нам нужен авторизованный пользователь) */
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    
+    /* добавляем политику (теперь каждый ендпоинт будет ждать аутентифицированного пользователя)*/
+    option.Filters.Add(new AuthorizeFilter(policy));
+    
+});
 
+/* метод расширения с описанными в нем сервисами */
 builder.Services.AddApplicationServices(builder.Configuration);
+
+/* сервис идентификации */
+builder.Services.AddIdentityServices(builder.Configuration);
 
 #endregion
 
@@ -31,11 +47,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+/* политика заголовков */
 app.UseCors("CorsPolicy");
 
+/* аутентификация */
+app.UseAuthentication();
+
+/* авторизация */
 app.UseAuthorization();
 
+/* контроллеры маршрутизации */
 app.MapControllers();
 
 #endregion
@@ -51,27 +72,27 @@ var services = scope.ServiceProvider;
 
 try
 {
-/* Получаем зараегестрированную службу */
-var context = services.GetRequiredService<DataContext>();
+    /* Получаем зараегестрированную службу */
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
 
-/* Вызываем миграцию */
-await context.Database.MigrateAsync();
+    /* Вызываем миграцию */
+    await context.Database.MigrateAsync();
 
-/* Добаляем данны в нашу бд */
-await Seed.SeedData(context);
+    /* Добаляем данны в нашу бд */
+    await Seed.SeedData(context,userManager);
 
 }
 catch (Exception e)
 {
-/* Получение ошибки */
-var logger = services.GetRequiredService<ILogger<Program>>();
+    /* Получение ошибки */
+    var logger = services.GetRequiredService<ILogger<Program>>();
 
-/* Регистрация ошибки в логах */
-logger.LogError(e, "An error occured during migrations");
+    /* Регистрация ошибки в логах */
+    logger.LogError(e, "An error occured during migrations");
 
 }
 
 #endregion
 
-/* Go! */
 app.Run();
