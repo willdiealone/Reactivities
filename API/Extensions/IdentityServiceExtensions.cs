@@ -20,6 +20,6 @@ public static class IdentityServiceExtensions
 
         services.AddAuthentication();
                 
-        return services;
+        return services; 
     }
 }
