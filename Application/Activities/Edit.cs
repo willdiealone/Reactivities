@@ -9,6 +9,8 @@ using Persistence;
 
 namespace Application;
 
+// ReSharper disable CommentTypo
+
 /* Класс редактирования сущности (Activity) */
 public class Edit
 {
