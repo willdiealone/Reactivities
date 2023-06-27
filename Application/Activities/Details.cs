@@ -1,32 +1,40 @@
 using Application.Core;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application;
+namespace Application.Activities;
 
 /// <summary>
 /// Класс который делает более конкретный запрос
 /// </summary>
 public class Details
 {
-    public class Query : IRequest<Result<Activity>>
+    public class Query : IRequest<Result<ActivityDto>>
     {
         public Guid Id { get; set; }
     }
     
-    public class Handler : IRequestHandler<Query,Result<Activity>>
+    public class Handler : IRequestHandler<Query,Result<ActivityDto>>
     {
-        private readonly DataContext _context;        
+        private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public Handler(DataContext _context)
+        public Handler(DataContext context,IMapper mapper)
         {
-            this._context = _context;            
+            _context = context;
+            _mapper = mapper;
         }
-        public async Task<Result<Activity>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<ActivityDto>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return Result<Activity>.Success(await _context.Activities.FindAsync( new object[] {request.Id},cancellationToken));             
+            var activities = await _context.Activities
+                .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
+            
+            return Result<ActivityDto>.Success(activities);             
         }
     }
 }

@@ -1,9 +1,8 @@
 using Application.Core;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Persistence;
 
-namespace Application;
+namespace Application.Activities;
 
 /// <summary>
 /// Класс удаления обьекта
@@ -19,9 +18,9 @@ public class Delete
     {
         private readonly DataContext _context;        
 
-        public Handler(DataContext _context)
+        public Handler(DataContext context)
         {
-            this._context = _context;            
+            _context = context;            
         }
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
