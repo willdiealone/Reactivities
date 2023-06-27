@@ -15,7 +15,7 @@ public class RegisterDto
     
     [Required]
     /* валидация пароля (цифры,буквы,Буквы) размером от 4 до 8 символов */
-    [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$",ErrorMessage = "Password must be complex")]
+    [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,16}$",ErrorMessage = "Password must be complex")]
     public string Password { get; set; }
     
     [Required]

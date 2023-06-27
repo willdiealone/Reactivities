@@ -1,9 +1,12 @@
 using System.Text;
 using API.Services;
 using Application;
+using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +78,15 @@ public static class ApplicationServiceExtensions
           
           /* наш токен */
           services.AddScoped<TokenService>();
+
+          /* добавляем доступ к контексту */
+          services.AddHttpContextAccessor();
+          
+          /* регистрируем зависимость для доступа к контексту через IUserAccessor
+           который при запросе будет содержать экземпляр UserAccessor в конструкторе которого
+           будет IHttpContextAccessor 
+           */
+          services.AddScoped<IUserAccessor,UserAccessor>();
 
           return services;
      }

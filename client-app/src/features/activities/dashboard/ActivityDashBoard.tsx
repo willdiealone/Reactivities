@@ -16,7 +16,7 @@ export default observer(function ActivityDashboard() {
         //эффект будет выполнен, когда значение activityStore изменится.
     }, [activityRegistry.size,loadingActivities])
 
-    if (activityStore.loadingInitial) return <LoadingComponent content={'Loading app'} />
+    if (activityStore.loadingInitial) return <LoadingComponent content={'Loading activities...'} />
 
     return (
 
