@@ -1,13 +1,11 @@
-using Application.Activities;
 using Application.Core;
 using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Persistence;
 
-namespace Application;
+namespace Application.Activities;
 
 // ReSharper disable CommentTypo
 
