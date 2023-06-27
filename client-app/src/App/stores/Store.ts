@@ -1,12 +1,16 @@
 import ActivityStore from "./ActivityStore";
 import {createContext, useContext} from "react";
 import CommonStore from "./commonStore";
+import UserStore from "./UserStore";
+import ModalStore from "./modalStore";
 
 
 /* создание интерфейса activityStore ActivityStore и commonStore CommonStore*/ 
 interface Store {
     activityStore: ActivityStore
     commonStore: CommonStore
+    userStore: UserStore
+    modalStore: ModalStore
 }
 
 
@@ -14,7 +18,9 @@ interface Store {
 /* константа которая имеет в свойстве новый обьект ActivityStore() и CommonStore() */
 export const store: Store = {
     activityStore: new ActivityStore(),
-    commonStore: new CommonStore()
+    commonStore: new CommonStore(),
+    userStore: new UserStore(),
+    modalStore: new ModalStore()
 };
 
 

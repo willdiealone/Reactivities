@@ -1,31 +1,41 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+[AllowAnonymous]
+public class BuggyController : BaseApiController
 {
-    public class BuggyController : BaseApiController
+    [AllowAnonymous]
+    [HttpGet("not-found")]
+    public ActionResult GetNotFound()
     {
-        [HttpGet("not-found")]
-        public ActionResult GetNotFound()
-        {
-            return NotFound();
-        }
+        return NotFound();
 
-        [HttpGet("bad-request")]
-        public ActionResult GetBadRequest()
-        {
-            return BadRequest("This is a bad request");
-        }
+    }
 
-        [HttpGet("server-error")]
-        public ActionResult GetServerError()
-        {
-            throw new Exception("This is a server error");
-        }
 
-        [HttpGet("unauthorised")]
-        public ActionResult GetUnauthorised()
-        {
-            return Unauthorized();
-        }
+    [AllowAnonymous]
+    [HttpGet("bad-request")]
+    public ActionResult GetBadRequest()
+    {
+        return BadRequest("This is a bad request");
+
+    }
+
+
+    [AllowAnonymous]
+    [HttpGet("server-error")]
+    public ActionResult GetServerError()
+    {
+        throw new Exception("This is a server error");
+
+    }
+
+    [AllowAnonymous]
+    [HttpGet("unauthorised")]
+    public ActionResult GetUnauthorised()
+    {
+        return Unauthorized();
+
     }
 }

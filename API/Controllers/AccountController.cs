@@ -5,6 +5,7 @@ using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
@@ -51,12 +52,16 @@ public class AccountController : ControllerBase
     {
         if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
         {
-            return BadRequest("User Name is already taken");
+            return BadRequest("Name is already taken");
+            // ModelState.AddModelError("username", "Name is already taken" );
+            // return ValidationProblem(ModelState);
         }
         
         if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
         {
-            return BadRequest("User Email is already taken");
+            return BadRequest("Email is already taken");
+            // ModelState.AddModelError("email", "Email is already taken" );
+            // return ValidationProblem(ModelState);
         }
 
         var user = new AppUser()

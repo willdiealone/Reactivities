@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Domain;
 
-public class AppUser : IdentityUser
+// ReSharper disable CommentTypo
+
+public class AppUser : IdentityUser                 // модель для хранения пользователей в хранилище
 {
     /// <summary>
     /// Имя

@@ -12,10 +12,7 @@ public static class IdentityServiceExtensions
         services.AddIdentityCore<AppUser>(options =>
         {
             options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireDigit = true;
-            options.Password.RequiredUniqueChars = 2;
-            options.Password.RequireUppercase = true;
-
+            
         }).AddEntityFrameworkStores<DataContext>();
 
         services.AddAuthentication();
