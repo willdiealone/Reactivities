@@ -1,12 +1,12 @@
-using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application;
+namespace Application.Activities;
 
 public class Create
 {   
@@ -25,11 +25,13 @@ public class Create
  
     public class Handler : IRequestHandler<Command,Result<Unit>>
     {
-        private readonly DataContext _context;        
+        private readonly DataContext _context;
+        private readonly IUserAccessor _userAccessor;
 
-        public Handler(DataContext _context)
+        public Handler(DataContext context,IUserAccessor userAccessor)
         {
-            this._context = _context;
+            _context = context;
+            _userAccessor = userAccessor;
         }
 
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
@@ -39,13 +41,32 @@ public class Create
             {
                 request.Activity.Date = DateTime.SpecifyKind(request.Activity.Date, DateTimeKind.Utc);
             }
-
+            
+            // сравниваем имя пользователя из хранилища и из токена (передаем в user) 
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.UserName == _userAccessor.GetUserName(), cancellationToken: cancellationToken);
+            
+            // хост добавляет учасника события
+            var attendee = new ActivityAttendee()
+            {
+                AppUser = user,
+                Activity = request.Activity,
+                IsHost = true
+            };
+            
+            // учатсник добавляется в коллекцию 
+            request.Activity.Attendees.Add(attendee);
+            
+            // добавляем участника в таблицу Activities
             _context.Activities.Add(request.Activity);
-
+            
+            // проверка на успех
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
+            // возвращаем Failed
             if(!result) return Result<Unit>.Failure("Failed to Create");
-
+            
+            // вовзращаем Success
             return Result<Unit>.Success(Unit.Value);
         }
     }

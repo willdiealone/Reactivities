@@ -1,10 +1,12 @@
+
+
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain;
 
 // ReSharper disable CommentTypo
 
-public class AppUser : IdentityUser                 // модель для хранения пользователей в хранилище
+public class AppUser : IdentityUser
 {
     /// <summary>
     /// Имя
@@ -16,5 +18,5 @@ public class AppUser : IdentityUser                 // модель для хр�
     /// </summary>
     public string Bio { get; set; }
     
-    
+    public ICollection<ActivityAttendee> Activities { get; set; }
 }
