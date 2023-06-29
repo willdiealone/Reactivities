@@ -47,7 +47,7 @@ public static class ApplicationServiceExtensions
           });          
          
            /*  Создаем сервис медиарт и указываем тип где находится наш обработчик запроса */
-          services.AddMediatR(typeof(List.Handler));    
+          services.AddMediatR(typeof(List.Handler).Assembly);    
 
           /* Подключаем autoMapper в наши сервисы, указываем путь и указываем свойство Assembly
           что говорит о том что мы хотим использовать нашу сборку чтобы найти все обьекты*/
@@ -58,26 +58,6 @@ public static class ApplicationServiceExtensions
           
           /* добавляем все валидоторы описанные в сборке типа Create  */
           services.AddValidatorsFromAssemblyContaining<Create>();
-          
-          /* создаем ключ что бы передать его нашей проверке */
-          var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key super secret " +
-                                                                    "key super secret key super secret key"));
-          
-          /* сервис аутентификации */
-          services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options =>
-               {
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                         ValidateIssuerSigningKey = true,
-                         IssuerSigningKey = key,
-                         ValidateIssuer = false,
-                         ValidateAudience = false
-                    };
-               });
-          
-          /* наш токен */
-          services.AddScoped<TokenService>();
 
           /* добавляем доступ к контексту */
           services.AddHttpContextAccessor();

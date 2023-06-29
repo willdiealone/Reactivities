@@ -1,6 +1,4 @@
-﻿
-namespace Domain;
-
+﻿namespace Domain;
 
 public class Activity
 {   
@@ -17,6 +15,8 @@ public class Activity
     public string City { get; set; }
        
     public string Venue { get; set; }
+    
+    public bool IsCanselled { get; set; }
 
     public ICollection<ActivityAttendee> Attendees { get; set; } = new List<ActivityAttendee>();
 }
