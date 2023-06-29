@@ -13,7 +13,6 @@ public class Create
     public class Command : IRequest<Result<Unit>>
     {
         public Activity Activity { get; set; }
-
     }
 
     public class CommandValidator : AbstractValidator<Command>{
@@ -44,7 +43,7 @@ public class Create
             
             // сравниваем имя пользователя из хранилища и из токена (передаем в user) 
             var user = await _context.Users.FirstOrDefaultAsync(u =>
-                u.UserName == _userAccessor.GetUserName(), cancellationToken: cancellationToken);
+                u.UserName == _userAccessor.GetUserName(), cancellationToken);
             
             // хост добавляет учасника события
             var attendee = new ActivityAttendee()
