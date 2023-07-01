@@ -1,5 +1,5 @@
 import axios, {AxiosError, AxiosResponse} from "axios";
-import {Activity} from "../models/activity";
+import {Activity, ActivityFormValues} from "../models/activity";
 import {toast} from "react-toastify";
 import {router} from "../router/Router";
 import {store} from "../stores/Store";
@@ -85,9 +85,10 @@ const request =  {
 const Activities ={
     list: () => request.get<Activity[]>('Activities'),
     details: (id:string) => request.get<Activity>(`Activities/${id}`),
-    create: (activity: Activity) => request.post<void>('Activities', activity),
-    update: (activity:Activity) => request.put<void>(`activities/${activity.id}`,activity),
+    create: (activity: ActivityFormValues) => request.post<void>('Activities', activity),
+    update: (activity:ActivityFormValues) => request.put<void>(`activities/${activity.id}`,activity),
     delete: (id:string) => request.delete<void>(`activities/${id}`),
+    attend: (id:string) => request.post<void>(`Activities/${id}/attend`,{}),
 };
 
 /* запрос для возврата нашего пользователя */
@@ -104,46 +105,3 @@ const agent = {
 }
 
 export default agent;
-
-// (error: AxiosError) => {
-//     const {data, status, config} = error.response as AxiosResponse;
-//     switch (status) {
-//         /* не верный запрос */
-//         case 400:
-//             if(config.method === 'get' && data.errors.hasOwnProperty('id')){
-//                 router.navigate('/not-found');
-//             }
-//             // if (config.url?.includes('aсcount/register')){
-//             //     toast.error(data);
-//             // }
-//             // if(config.url?.includes('activities/notaguid')){
-//             //     toast.error(data);
-//             //     router.navigate('/not-found')
-//             // }
-//             if (config.url?.includes('buggy/bad-request')){
-//                 toast.error(data);
-//             }
-//             if(data.errors){
-//                 const modalStateErrors = [];
-//                 for (const key in data.errors){
-//                     if(data.errors[key]){
-//                         modalStateErrors.push(data.errors[key]);
-//                     }
-//                 }
-//                 throw modalStateErrors.flat();
-//             }
-//             break;
-//         case 401: toast.error('unauthorised') /* ошибка аутентификации */
-//             break;
-//         case 403: toast.error('forbidden') /* ошибка авторизации */
-//             break;
-//         case 404: router.navigate('/not-found') /* не найдено */
-//             break;
-//         case 500: store.commonStore.setServerError(data);
-//             router.navigate('/server-error')  /* ошика сервера */
-//             break;
-//         default:
-//             break;
-//     }
-//     return Promise.reject(error);
-// });

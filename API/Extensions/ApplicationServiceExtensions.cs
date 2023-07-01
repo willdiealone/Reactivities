@@ -1,16 +1,12 @@
-using System.Text;
-using API.Services;
-using Application;
 using Application.Activities;
 using Application.Core;
 using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using infrastructure.Photos;
 using infrastructure.Security;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
 namespace API.Extensions;
@@ -67,7 +63,14 @@ public static class ApplicationServiceExtensions
            будет IHttpContextAccessor 
            */
           services.AddScoped<IUserAccessor,UserAccessor>();
+          
+          /* добавляем сервис конфигурации нашего Cloudinary */
+          services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
 
+          /* добавяем сервис загрузки/удаления фотографий */
+          services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+          
+          
           return services;
      }
 }

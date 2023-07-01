@@ -1,9 +1,9 @@
-import {useEffect, useState} from "react";
+ import {useEffect, useState} from "react";
 import {Button, Header, Segment} from "semantic-ui-react";
 import { useStore } from "../../../App/stores/Store";
 import { observer } from "mobx-react-lite";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import { Activity } from "../../../App/models/activity";
+import {Activity, ActivityFormValues} from "../../../App/models/activity";
 import LoadingComponent from "../../../App/layout/LoadingComponent";
 import {Formik, Form} from "formik";
 import * as Yup from 'yup';
@@ -27,24 +27,16 @@ export default observer (function ActivityForm(){
     const {id} = useParams();    
 
     // хук который инициализилизирует activity пустой строкой
-    const [activity,setActivity] = useState<Activity>({
-        id: '',
-        title: '',
-        date: new Date(),
-        description: '',
-        category: '',
-        city: '',
-        venue: ''
-    });
+    const [activity,setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
     
     // хук который проверяет есть ли у нас id, если есть закидываем activity в хук useState
     useEffect(() => {
-        if (id) loadActivity(id).then(activity => setActivity(activity!))
+        if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)))
     },[id,loadActivity])
     
     
     // передаем на обьект в зависимости от наличия у него id
-    function handleFormSubmit (activity: Activity){
+    function handleFormSubmit (activity: ActivityFormValues){
         console.log('Submitted activity:', activity);
         if (!activity.id){
             activity.id = uuid();
@@ -97,7 +89,7 @@ export default observer (function ActivityForm(){
                         <Button
                             disabled={isSubmitting || !dirty || !isValid}
                             className="ui button"
-                            loading={loading}
+                            loading={isSubmitting}
                             floated='right'
                             positive
                             type='submit'

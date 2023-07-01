@@ -10,8 +10,6 @@ import {useStore} from "../stores/Store";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
 
-
-
 function App() {
 
   // получаем текущее местоположение
@@ -28,7 +26,7 @@ function App() {
   },[userStore,commonStore])
       
   if(!commonStore.appLoaded) return <LoadingComponent content={'Loading app...'}/>
-  
+   
   return (
     <>
       <ModalContainer/>

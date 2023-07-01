@@ -18,7 +18,7 @@ export default observer( function NavBar(){
                 <Menu.Item >
                     <Button animated='fade' as={NavLink} to='createActivity' color='green'>
                         <Button.Content  visible>Create Activity</Button.Content>
-                        <Button.Content hidden>user plus</Button.Content>
+                        <Button.Content hidden>new Activity</Button.Content>
                     </Button>
                 </Menu.Item>
                 <Menu.Item position={"right"}>
