@@ -19,7 +19,6 @@ public class ActivitiesController : BaseApiController
     public async Task<IActionResult> GetActivity(Guid id, CancellationToken ct){        
        return HandleResult(await Mediator.Send(new Details.Query() { Id = id }, ct));
     }
-
     
     [HttpGet("/")]
     public IActionResult GetRoot()

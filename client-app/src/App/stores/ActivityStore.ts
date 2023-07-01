@@ -1,8 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Activity } from "../models/activity";
+import {Activity, ActivityFormValues} from "../models/activity";
 import agent from "../api/agent";
 import { v4 as uuid } from "uuid";
 import {format} from "date-fns";
+import {store} from "./Store";
+import {Profile} from "../models/profile";
 
 export default class ActivityStore {
 
@@ -86,8 +88,19 @@ export default class ActivityStore {
         }
     }
 
-    // функиция которая изменяет дату обьекта и кладет его в коллекцию
+    // 
     private setActivity = (activity: Activity) => {
+        /* получаем пользователя залогиненного */
+        const user = store.userStore.user;
+        if(user){
+            /* проверяем является ли он участником */
+            activity.isGoing = activity.attendees!.some(
+                a=>a.userName === user.userName)
+            /* проверяем является ли он хостом мероприятия*/
+            activity.isHost = activity.hostUserName === user.userName
+            /* проверяем я вляется ли он хостом ? host this user : null */
+            activity.host = activity.attendees?.find(x=>x.userName === activity.hostUserName);
+        }
         activity.date = new Date (activity.date!)
         this.activityRegistry.set(activity.id, activity);
     }
@@ -103,34 +116,46 @@ export default class ActivityStore {
     }
 
     // создает обьект который пришел параметром, отправяет его в бд и добавляет в нашу коллекцию
-    createActivity = async (activity: Activity) => {
-        this.loading = true;
+    createActivity = async (activity: ActivityFormValues) => {
+        /*  добавляем user */
+        const user = store.userStore.user;
+        /*  создаем участника */
+        const attendee = new Profile(user!);
         activity.id = uuid();
         try {
+            /*  отправляем запрос с даными */
             await agent.Activities.create(activity);
+            /* создаем дто */
+            const newActivity = new Activity(activity)
+            /* добавляем создателя мероприятия в хост */
+            newActivity.hostUserName =  user!.userName
+            /* добавляем создателя мероприятия в участники  */
+            newActivity.attendees = [attendee]
+            /* прокидываем новое мероприятие в коллекцию activityRegistry и устанавливаем там значения*/
+            this.setActivity(newActivity)
             runInAction(() => {
-                this.activityRegistry.set(activity.id, activity);
-                this.selectedActivity = activity;
-                this.editMode = false;
-                this.loading = false;
+                /* добавляем мероприятие в selectedActivity */
+                this.selectedActivity = newActivity;
             })
         } catch (error) {
             console.log(error);
-            this.loading = false;
         }
     }
 
 
     // функция добавляет новый обект по найденому ключу
-    updateActivity = async (activity: Activity) => {
-        this.loading = true;
+    updateActivity = async (activity: ActivityFormValues) => {
         try {
             await agent.Activities.update(activity);
             runInAction(() => {
-                this.activityRegistry.set(activity.id, activity)
-                this.selectedActivity = activity;
-                this.editMode = false;
-                this.loading = false;
+                if(activity.id){
+                    /* объединение */
+                    let updatedActivity = {...this.getActivity(activity.id),...activity}
+                    /* обновляем по ключу в коллекции (приводим к Activity) */
+                    this.activityRegistry.set(activity.id, updatedActivity as Activity)
+                    /* добавляем в selectedActivity */
+                    this.selectedActivity = updatedActivity as Activity;
+                }
             })
         } catch (error) {
             console.log(error);
@@ -151,6 +176,54 @@ export default class ActivityStore {
             runInAction(() => {
                 this.loading = false;
             })
+        }
+    }
+    
+    updateAttendance = async () => {
+         const user = store.userStore.user;
+         this.loading = true;
+         try {
+             await agent.Activities.attend(this.selectedActivity!.id) // выбранная активность
+             /* Проверяем является ли user участником если нет, то
+                    делаем фильтрацию если user есть то перезаписываем массив без него
+                 *  если обьекта user нету в масиве то isGoing = false и мы переходим к else
+                 *  и добавляем боба в массив после чего добавляем обновляем нашу коллекцию мероприятий
+                 *  activityRegistry, а если user изначально не участник, то просто добавляемя его
+                 *  */
+             runInAction(() => {
+                 if(this.selectedActivity?.isGoing){
+                     this.selectedActivity.attendees = 
+                     this.selectedActivity.attendees?.filter(a=> a.userName !== user?.userName)
+                     this.selectedActivity.isGoing = false;
+                 }else{
+                     const attendee = new Profile(user!);
+                     this.selectedActivity?.attendees?.push(attendee);
+                     this.selectedActivity!.isGoing = true;
+                 }
+                 this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!)
+             })
+         }catch (e) {
+             console.log(e)
+         }finally {
+             runInAction(()=> this.loading = false); // чтобы не случилось сработает после завершения
+         }
+    }
+    
+    /* метод отмены мероприятия */
+    cancelActivityToogle = async () => {
+        this.loading = true;
+        try {
+             await agent.Activities.attend(this.selectedActivity!.id)
+             runInAction(()=>{
+                 /* меняем влаг активности мероприятия на противоположный */
+                this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+                 /* обновляем по ключу в коллекции */
+                this.activityRegistry.set(this.selectedActivity!.id, this!.selectedActivity!)
+             })
+        }catch (e) {
+            console.log(e)
+        }finally {
+            runInAction(() => this.loading = false)
         }
     }
 
