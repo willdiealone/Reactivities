@@ -33,9 +33,8 @@ public class Delete
 
             var result =  await _context.SaveChangesAsync(cancellationToken) > 0;
 
-            if (!result) Result<Unit>.Failure("Failed to delete");
-
-            return Result<Unit>.Success(Unit.Value);
+            /* возвращаем результат */
+            return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to Create");
         }
     }
 }
