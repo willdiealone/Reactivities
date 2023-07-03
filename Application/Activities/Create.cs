@@ -61,12 +61,9 @@ public class Create
             
             // проверка на успех
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
-
-            // возвращаем Failed
-            if(!result) return Result<Unit>.Failure("Failed to Create");
             
-            // вовзращаем Success
-            return Result<Unit>.Success(Unit.Value);
+            /* возвращаем результат */
+            return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to Create");
         }
     }
 

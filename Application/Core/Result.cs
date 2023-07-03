@@ -11,6 +11,6 @@ namespace Application.Core
         
         public static Result<T> Success(T value) => new() { IsSuccess = true, Value = value};       
         
-        public static Result<T> Failure(string error) => new() {IsSuccess = true, Error = error};
+        public static Result<T> Failure(string error) => new() {IsSuccess = false, Error = error};
     }
 }

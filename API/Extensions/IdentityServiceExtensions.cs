@@ -20,8 +20,7 @@ public static class IdentityServiceExtensions
         {
             options.Password.RequireNonAlphanumeric = false;
             
-        }).AddEntityFrameworkStores<DataContext>()
-            .AddSignInManager<SignInManager<AppUser>>();
+        }).AddEntityFrameworkStores<DataContext>().AddSignInManager<SignInManager<AppUser>>();
 
         /* создаем ключ что бы передать его нашей проверке */
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key super secret " +

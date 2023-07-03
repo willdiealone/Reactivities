@@ -49,10 +49,9 @@ public class Edit
             _mapper.Map(request.Activity, activity);
          
             var result = await _context.SaveChangesAsync(cancellationToken) > 0;
-
-            if (!result) return Result<Unit>.Failure("Failed to edit");
-
-            return Result<Unit>.Success(Unit.Value);
+            
+            /* возвращаем результат */
+            return result ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Failed to Create");
         }
     }
 
