@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230702120904_PhotoEntityAdded")]
-    partial class PhotoEntityAdded
+    [Migration("20230705135242_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsCanselled")
+                    b.Property<bool>("IsCanсelled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Title")

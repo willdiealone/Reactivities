@@ -54,7 +54,7 @@ public class UpdateAttendance
                мероприятие)
              */
             if (attendance != null && hostUserName == user.UserName)
-                activity.IsCanselled = !activity.IsCanselled;
+                activity.IsCanсelled = !activity.IsCanсelled;
             
             /* если автор запроса(является участником) и не является хостом мероприятия
                то этот пользователь может удалить себя из мероприятия)

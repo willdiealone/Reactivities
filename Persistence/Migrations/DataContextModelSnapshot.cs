@@ -40,7 +40,7 @@ namespace Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsCanselled")
+                    b.Property<bool>("IsCanсelled")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Title")

@@ -18,7 +18,7 @@ public class ActivityDto
        
     public string Venue { get; set; }
 
-    public bool IsCanselled { get; set; }
+    public bool IsCancelled { get; set; }
     public string HostUserName { get; set; }
 
     public ICollection<AttandeeDto> Attendees { get; set; }
