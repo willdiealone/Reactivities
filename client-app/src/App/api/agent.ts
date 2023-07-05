@@ -4,6 +4,7 @@ import {toast} from "react-toastify";
 import {router} from "../router/Router";
 import {store} from "../stores/Store";
 import {User, UserFormValues} from "../../features/users/User";
+import {Photo, Profile} from "../models/profile";
 
 
 // создаем константу которая реализует задержку 
@@ -98,10 +99,24 @@ const Account ={
     register: (user:UserFormValues) => request.post<User>('account/register',user)
 }
 
+const Profiles = {
+    get: (username:string) => request.get<Profile>(`/Profiles/${username}`),
+    uploadPhoto: (file: Blob) => {
+        let formData = new FormData();
+        formData.append('File',file);
+        return axios.post<Photo>('Photos',formData, {
+            headers: {'Content-type': 'multipart/form-data'}
+        })
+    },
+    setMainPhoto: (id: string) => request.post(`/Photos/${id}/setMain`,{}),
+    deletePhoto: (id: string) => request.delete(`/Photos/${id}`)
+}
+
 /* Agents для экспорта кода из этого файла */
 const agent = {
     Activities,
-    Account
+    Account,
+    Profiles
 }
 
 export default agent;

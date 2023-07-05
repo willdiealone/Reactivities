@@ -10,7 +10,6 @@ export default class ActivityStore {
 
     activityRegistry = new Map<string, Activity>();
     selectedActivity: Activity | undefined = undefined;
-    editMode: boolean = false;
     loading: boolean = false;
     loadingInitial: boolean = false;
 
@@ -47,7 +46,7 @@ export default class ActivityStore {
 
 
     // функция которая делает асинхронный запрос,
-    // форматирует дату и отправяет элементы в коллекцию activityRegistry
+    // отправяет элементы в коллекцию activityRegistry
     loadingActivities = async () => {
         this.setLoadingInitial(true);
         try {
@@ -66,9 +65,7 @@ export default class ActivityStore {
     loadActivity = async (id: string) => {
         let activity = this.getActivity(id);
         if (activity) {
-            runInAction(()=>{
-                this.selectedActivity = activity;
-            })
+            this.selectedActivity = activity;
             return activity;
         }
         else {
@@ -95,9 +92,9 @@ export default class ActivityStore {
         if(user){
             /* проверяем является ли он участником */
             activity.isGoing = activity.attendees!.some(
-                a=>a.userName === user.userName)
+                a=>a.userName === user.userName);
             /* проверяем является ли он хостом мероприятия*/
-            activity.isHost = activity.hostUserName === user.userName
+            activity.isHost = activity.hostUserName === user.userName;
             /* проверяем я вляется ли он хостом ? host this user : null */
             activity.host = activity.attendees?.find(x=>x.userName === activity.hostUserName);
         }
@@ -210,20 +207,18 @@ export default class ActivityStore {
     }
     
     /* метод отмены мероприятия */
-    cancelActivityToogle = async () => {
+    cancelActivityToggle = async () => {
         this.loading = true;
         try {
-             await agent.Activities.attend(this.selectedActivity!.id)
-             runInAction(()=>{
-                 /* меняем влаг активности мероприятия на противоположный */
+            await agent.Activities.attend(this.selectedActivity!.id);
+            runInAction(() => {
                 this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
-                 /* обновляем по ключу в коллекции */
-                this.activityRegistry.set(this.selectedActivity!.id, this!.selectedActivity!)
-             })
-        }catch (e) {
-            console.log(e)
-        }finally {
-            runInAction(() => this.loading = false)
+                this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!);
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            runInAction(() => this.loading = false);
         }
     }
 

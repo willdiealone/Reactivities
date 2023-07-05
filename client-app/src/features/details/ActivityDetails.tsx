@@ -17,12 +17,14 @@ export default observer (function ActivityDetails(){
     // считываем id из url
     const {id} = useParams();
 
-    // обновляем если изменился id
+    // обновляем если изменился id или loadActivity
     useEffect(() => {
         if (id) loadActivity(id)
     },[id,loadActivity])
 
     if(loadingInitial || !activity) return <LoadingComponent/>;
+
+    console.log(activity)
     
     return (
         <Grid>
