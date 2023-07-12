@@ -1,7 +1,24 @@
 import { observer } from 'mobx-react-lite'
 import {Segment, Header, Comment, Form, Button} from 'semantic-ui-react'
+import {useStore} from "../../App/stores/Store";
+import {useEffect} from "react";
+import {Link} from "react-router-dom";
 
-export default observer(function ActivityDetailedChat() {
+interface Props{
+    activityId: string
+}
+
+export default observer(function ActivityDetailedChat({activityId}:Props) {
+    
+    const {commentStore} = useStore()
+    
+    useEffect(()=>{
+        if(activityId){
+            commentStore.createHubConnections(activityId);
+        }
+        return commentStore.clearComments();
+    },[commentStore,activityId])
+    
     return (
         <>
             <Segment
@@ -15,34 +32,20 @@ export default observer(function ActivityDetailedChat() {
             </Segment>
             <Segment attached>
                 <Comment.Group>
-                    <Comment>
-                        <Comment.Avatar src='/assets/user.png'/>
-                        <Comment.Content>
-                            <Comment.Author as='a'>Matt</Comment.Author>
-                            <Comment.Metadata>
-                                <div>Today at 5:42PM</div>
-                            </Comment.Metadata>
-                            <Comment.Text>How artistic!</Comment.Text>
-                            <Comment.Actions>
-                                <Comment.Action>Reply</Comment.Action>
-                            </Comment.Actions>
-                        </Comment.Content>
-                    </Comment>
-
-                    <Comment>
-                        <Comment.Avatar src='/assets/user.png'/>
-                        <Comment.Content>
-                            <Comment.Author as='a'>Joe Henderson</Comment.Author>
-                            <Comment.Metadata>
-                                <div>5 days ago</div>
-                            </Comment.Metadata>
-                            <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-                            <Comment.Actions>
-                                <Comment.Action>Reply</Comment.Action>
-                            </Comment.Actions>
-                        </Comment.Content>
-                    </Comment>
-
+                    {commentStore.comments.map(comments => (
+                        <Comment key={comments.id}>
+                            <Comment.Avatar src={comments.image || '/assets/user.png'}/>
+                            <Comment.Content>
+                                <Comment.Author as={Link} to={`/profiles/${comments.userName}`}>
+                                    {comments.displayName}
+                                </Comment.Author>
+                                <Comment.Metadata>
+                                    <div>{comments.CreatedAt }</div>
+                                </Comment.Metadata>
+                                <Comment.Text>{comments.body}</Comment.Text>
+                            </Comment.Content>
+                        </Comment>
+                    ))}
                     <Form reply>
                         <Form.TextArea/>
                         <Button
@@ -55,6 +58,5 @@ export default observer(function ActivityDetailedChat() {
                 </Comment.Group>
             </Segment>
         </>
-
     )
 })

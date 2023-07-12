@@ -109,7 +109,8 @@ const Profiles = {
         })
     },
     setMainPhoto: (id: string) => request.post(`/Photos/${id}/setMain`,{}),
-    deletePhoto: (id: string) => request.delete(`/Photos/${id}`)
+    deletePhoto: (id: string) => request.delete(`/Photos/${id}`),
+    updateProfile: (profile: Partial<Profile>) => request.put('/Profiles', profile)
 }
 
 /* Agents для экспорта кода из этого файла */

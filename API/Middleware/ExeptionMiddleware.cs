@@ -4,7 +4,6 @@ using Application.Core;
 
 namespace API.Middleware;
 
-// ReSharper disable CommentTypo
 
 public class ExeptionMiddleware
 {

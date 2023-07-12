@@ -11,11 +11,11 @@ public class DataContext : IdentityDbContext<AppUser>
     public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
     
     public DbSet<Photo> Photos { get; set; }
+    
+    public DbSet<Comment> Comments { get; set; }
 
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
-    {
-    }
-
+    public DataContext(DbContextOptions<DataContext> options) : base(options){}
+    
      protected override void OnModelCreating(ModelBuilder builder)
      {
          base.OnModelCreating(builder);
@@ -32,5 +32,10 @@ public class DataContext : IdentityDbContext<AppUser>
              .HasOne(u => u.Activity)
              .WithMany(a => a.Attendees)
              .HasForeignKey(aa => aa.ActivityId);
+
+         builder.Entity<Comment>()
+             .HasOne(a => a.Activity)
+             .WithMany(c => c.Comments)
+             .OnDelete(DeleteBehavior.Cascade);
      }
 }
