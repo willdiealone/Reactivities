@@ -3,7 +3,7 @@ import {User} from "../../features/users/User";
 export interface Profile {
     userName: string
     displayName: string
-    bio: string
+    bio: string 
     image?: string
     photos?: Photo[]
 }

@@ -12,6 +12,10 @@
 
     <ItemGroup>
       <PackageReference Include="CloudinaryDotNet" Version="1.21.0" />
+      <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0-preview.6.23329.7" />
+      <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.2" />
+      <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="7.0.0-preview.2.22152.2" />
     </ItemGroup>
 
 </Project>

@@ -1,13 +1,13 @@
 global using Activity = Domain.Activity;
 using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-// ReSharper disable CommentTypo
 
 /* Создаем WebApplicationBuilder */
 var builder = WebApplication.CreateBuilder(args);
@@ -58,6 +58,8 @@ app.UseAuthorization();
 
 /* контроллеры маршрутизации */
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
+
 
 #endregion
 

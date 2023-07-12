@@ -35,10 +35,11 @@ public static class ApplicationServiceExtensions
           {
                option.AddPolicy("CorsPolicy", policy =>
                {
-                    policy.AllowAnyMethod()
-                              .AllowAnyHeader()
-                              .WithOrigins("http://localhost:3000")
-                              .AllowCredentials();
+                    policy
+                         .AllowAnyMethod()
+                         .AllowAnyHeader()
+                         .AllowCredentials()
+                         .WithOrigins("http://localhost:3000");
                });
           });          
          
@@ -69,8 +70,25 @@ public static class ApplicationServiceExtensions
 
           /* добавяем сервис загрузки/удаления фотографий */
           services.AddScoped<IPhotoAccessor, PhotoAccessor>();
-          
-          
+
+          /* добавляем SignalR в сервисы */
+          services.AddSignalR();
+
+
+          #region Logger
+
+          /* добавляем логгер */
+          services.AddLogging(loggingBuilder =>
+          {
+               loggingBuilder
+                    .AddConsole();
+               
+               loggingBuilder
+                    .AddDebug();
+          });
+
+          #endregion
+
           return services;
      }
 }
