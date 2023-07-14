@@ -24,7 +24,7 @@ export default class CommonStore{
     setServerError(error: ServerError){ this.error = error; }
     
     /* прокидываем токен  */ 
-    setToken = (token: string | null) => { this.token = token; }
+    setToken = (token: string | null) => { this.token = token; console.log(token)}
     
     /* прокидываем флаг, что приложение загружено */
     setAppLoaded = () => { this.appLoaded = true; }

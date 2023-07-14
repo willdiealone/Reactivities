@@ -21,8 +21,7 @@ public static class IdentityServiceExtensions
         }).AddEntityFrameworkStores<DataContext>().AddSignInManager<SignInManager<AppUser>>();
 
         /* создаем ключ что бы передать его нашей проверке */
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key super secret " +
-                                                                  "key super secret key super secret key"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key super secret key super secret key super secret key"));
         
         /* сервис аутентификации */
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

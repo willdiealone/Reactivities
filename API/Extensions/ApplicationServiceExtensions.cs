@@ -8,6 +8,7 @@ using infrastructure.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Serilog;
 
 namespace API.Extensions;
 
@@ -73,6 +74,9 @@ public static class ApplicationServiceExtensions
 
           /* добавляем SignalR в сервисы */
           services.AddSignalR();
+
+          /* добавляем Serilog */
+          services.AddSerilog();
 
 
           #region Logger

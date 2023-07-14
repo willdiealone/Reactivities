@@ -2,6 +2,7 @@ using Application.Comments;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Create = Application.Comments.Create;
+using Serilog;
 
 namespace API.SignalR;
 
@@ -36,23 +37,17 @@ public class ChatHub : Hub
     /// </summary>
     public async override Task OnConnectedAsync()
     {
-        try
-        {
-            /* получаем контекст данных запроса */
-            var httpContext = Context.GetHttpContext();
+        _logger.LogInformation("Connection established.");
 
-            var activityId = httpContext!.Request.Query["activityId"];
+        /* получаем контекст данных запроса */
+        var httpContext = Context.GetHttpContext();
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, activityId);
+        var activityId = httpContext!.Request.Query["activityId"];
 
-            var result = await _mediator.Send(new List.Query { ActivityId = Guid.Parse(activityId) });
+        await Groups.AddToGroupAsync(Context.ConnectionId, activityId);
 
-            await Clients.Caller.SendAsync("LoadComments", result.Value);
+        var result = await _mediator.Send(new List.Query { ActivityId = Guid.Parse(activityId) });
 
-        }
-        catch (Exception e)
-        {
-            _logger.LogInformation(e, "Error");
-        }
+        await Clients.Caller.SendAsync("LoadComments", result.Value);
     }
 }

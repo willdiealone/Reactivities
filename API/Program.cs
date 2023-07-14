@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Serilog;
 
 /* Создаем WebApplicationBuilder */
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,13 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 /* сервис идентификации */
 builder.Services.AddIdentityServices(builder.Configuration);
+
+builder.Host.UseSerilog();
+
+/* сохдание логгера */
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
 
 #endregion
 
