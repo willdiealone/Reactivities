@@ -1,5 +1,5 @@
 import {ChatComment} from "../models/comment";
-import {HubConnection, HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
+import {HubConnection, HubConnectionBuilder, LogLevel, ILogger} from "@microsoft/signalr";
 import {makeAutoObservable, runInAction} from "mobx";
 import {store} from "./Store";
 
@@ -15,7 +15,6 @@ export default class CommentStore{
     /* подключение и конфигурация */
     createHubConnections = (activityId: string) =>{
         if(store.activityStore.selectedActivity){
-            console.log(activityId)
             
             /* создается новый объект HubConnection */
             this.hubConnection = new HubConnectionBuilder()
@@ -23,15 +22,16 @@ export default class CommentStore{
                 /* предаем путь к хабу */
                 .withUrl(`http://localhost:5434/chat?activityId=${activityId}`, {
                     
-                    /* епредаем токен юзера */
+                    /* передаем токен юзера */
                     accessTokenFactory: () => store.userStore.user?.token!
+                    
                 })
                 
                 /* автоматическое переподключение в случае разрыва соединения */
                 .withAutomaticReconnect()
                 
                 /* будут записываться сообщения информационного уровня и более высокого уровня */
-                .configureLogging(LogLevel.Information)
+                .configureLogging(LogLevel.Error)
                 
                 /* метод завершает конфигурацию объекта HubConnection и создает фактическое соединение */
                 .build();
@@ -39,7 +39,14 @@ export default class CommentStore{
             console.log(activityId)
                 
             /* метод start() для установки соединения с хабом */
-            this.hubConnection.start().catch(error => console.log("'Error establishing the connection: ",error));
+            this.hubConnection
+                .start()
+                .then(() => {
+                    console.log("Connection started");
+                })
+                .catch((error) => {
+                    console.log("Error establishing the connection: ", error);
+                });
             
             /* Когда на сервере происходит событие 'LoadComments', переданный обработчик будет вызываться 
             *  когда событие 'LoadComments' происходит, массив комментариев comments будет обновлен */

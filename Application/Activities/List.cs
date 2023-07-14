@@ -4,6 +4,7 @@ using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Serilog;
 
 namespace Application.Activities;
 
@@ -29,6 +30,8 @@ public class List
                 .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
+            Log.Information("Get Activties => {@activities}",activities);
+            
             /* возвращаем список */
             return Result<List<ActivityDto>>.Success(activities);
         }

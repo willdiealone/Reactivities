@@ -23,8 +23,6 @@ export default observer (function ActivityDetails(){
     },[id,loadActivity])
 
     if(loadingInitial || !activity) return <LoadingComponent/>;
-
-    console.log(activity)
     
     return (
         <Grid>

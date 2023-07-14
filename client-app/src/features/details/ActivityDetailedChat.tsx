@@ -16,7 +16,9 @@ export default observer(function ActivityDetailedChat({activityId}:Props) {
         if(activityId){
             commentStore.createHubConnections(activityId);
         }
-        return commentStore.clearComments();
+        return () => {
+            commentStore.clearComments();
+        }
     },[commentStore,activityId])
     
     return (

@@ -25,8 +25,6 @@ interface Props {
 
 export default observer(function ActivityDetailedHeader({ activity }: Props) {
     const { activityStore: { updateAttendance, loading, cancelActivityToggle } } = useStore();
-    console.log(activity)
-    console.log(activity.isCancelled)
     return (
         <Segment.Group>
             <Segment basic attached='top' style={{ padding: '0' }}>
